@@ -11,7 +11,7 @@ const SearchInput = () => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [isFocused, setIsFocused] = useState(false)
   const [keyword, setKeyword] = useState<string>("")
-  const [suggestion, setSuggestion] = useState<string[]>([])
+  const [suggestion, setSuggestion] = useState<{ type: string; sa: string; q: string }[]>([])
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setKeyword(event.target.value)
   }
@@ -21,26 +21,31 @@ const SearchInput = () => {
     if (keyword) {
       timer = setTimeout(() => {
         const encodedKeyword = encodeURIComponent(keyword)
-        fetchJsonp(`https://suggestion.baidu.com/su?wd=${encodedKeyword}&cb=json`, {
-          // 回调参数
-          jsonpCallback: "cb"
-        })
-          .then((response) => {
-            console.log(response)
+        const url = `https://www.baidu.com/sugrec?ie=utf-8&json=1&prod=pc&wd=${encodedKeyword}&_time=${Date.now()}&callback=jsonpCallback`
 
-            response.json()
-          })
+        // 定义全局回调函数
+        window.jsonpCallback = (data) => {
+          console.log(data) // 打印返回的数据
+          if (data && data.g) {
+            setSuggestion(data.g) // 更新建议列表
+          }
+        }
+
+        // 发起 JSONP 请求
+        fetchJsonp(url)
+          .then((response) => response.json()) // 解析 JSON 数据
           .then((data) => {
-            console.log(data)
-
-            setSuggestion(data.s)
+            console.log("Parsed JSON:", data)
+            setSuggestion(data.g)
           })
           .catch((error) => {
-            console.log(error)
+            console.error("Error fetching data:", error)
           })
-          .finally(() => {
-            console.log(suggestion)
-          })
+
+        // 清理函数以避免内存泄漏
+        return () => {
+          delete window.jsonpCallback // 清除全局回调函数
+        }
       }, 300)
     } else {
       setSuggestion([])
@@ -104,13 +109,13 @@ const SearchInput = () => {
         </motion.div>
       </div>
       <div>
-        {suggestion.map((s, i) => (
+        {suggestion.map(({ q, sa }) => (
           <p
-            key={i}
+            key={sa}
             className="cursor-pointer rounded-md py-1 pl-4 transition-all duration-300 hover:bg-black/20 hover:bg-opacity-50 hover:pl-8"
             // onClick={() => goSearch(s)}
           >
-            {s}
+            {q}
           </p>
         ))}
       </div>
