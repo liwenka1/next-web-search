@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { Search } from "lucide-react"
 import fetchJsonp from "fetch-jsonp"
 import { format } from "date-fns"
@@ -8,13 +8,14 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { EngList } from "@/config/site"
+import { useIndexStore } from "@/store"
 
-import type { IconType } from "react-icons"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
 const SearchInput = () => {
+  const { isFocused, setIsFocused } = useIndexStore()
+
   const inputRef = useRef<HTMLInputElement>(null)
-  const [isFocused, setIsFocused] = useState(false)
   const [keyword, setKeyword] = useState<string>("")
   const [suggestion, setSuggestion] = useState<{ type: string; sa: string; q: string }[]>([])
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,7 +73,26 @@ const SearchInput = () => {
     return () => clearInterval(interval)
   }, [])
 
-  const [activeEng, setActiveEng] = useState<{ icon: IconType }>({ icon: EngList[0].icon })
+  const variantsEngList = {
+    hidden: { opacity: 0, scale: 0, x: "-50%", y: "-50%" }, // 缩回到左上角
+    visible: { opacity: 1, scale: 1, x: "0%", y: "0%" }, // 正常显示
+    exit: { opacity: 0, scale: 0, x: "-50%", y: "-50%" } // 离开时缩回
+  }
+  const [activeEng, setActiveEng] = useState<(typeof EngList)[number]>(EngList[0])
+  const [isShowEngList, setIsShowEngList] = useState(false)
+  const handleEng = () => {
+    setIsShowEngList(!isShowEngList)
+  }
+  const handleSearch = (s?: string) => {
+    window.open(`${activeEng.href}${s || keyword}`)
+  }
+
+  useEffect(() => {
+    if (!isFocused) {
+      setKeyword("")
+      setIsShowEngList(false)
+    }
+  }, [isFocused])
 
   return (
     <motion.div
@@ -97,11 +117,6 @@ const SearchInput = () => {
             value={keyword}
             onChange={handleChange}
             onFocus={() => setIsFocused(true)}
-            onBlur={() => {
-              if (keyword === "") {
-                setIsFocused(false)
-              }
-            }}
             className={cn(
               "w-full rounded-full border-0 px-4 py-3 text-center transition-all duration-300",
               "focus:align-middle focus:outline-0 focus:outline-white",
@@ -113,53 +128,88 @@ const SearchInput = () => {
           <Button
             className="absolute left-0 top-0 h-full rounded-full p-2"
             variant="ghost"
-            // onClick={handleSearch}
+            onClick={handleEng}
+            onMouseDown={(e) => {
+              e.preventDefault() // 阻止默认行为，避免失去焦点
+            }}
           >
             <activeEng.icon className={cn("h-full w-full", isFocused ? "text-gray-800" : "hidden")} />
           </Button>
           <Button
             className="absolute right-0 top-0 h-full rounded-full p-2"
             variant="ghost"
-            // onClick={handleSearch}
+            onClick={() => handleSearch()}
           >
             <Search className={cn("h-full w-full", isFocused ? "text-gray-800" : "hidden")} />
           </Button>
         </motion.div>
       </div>
-      <div className="top-50 absolute z-10 w-52">
-        <ScrollArea className="absolute mt-1 h-auto rounded-md border-0 bg-background p-1">
-          {EngList.map(({ icon: Icon, title, href }, i) => (
-            <div
-              key={i}
-              className="flex w-full cursor-pointer rounded-md py-3 pl-4 transition-all duration-300 hover:bg-gray-800 hover:bg-opacity-50 hover:pl-8"
-              onClick={() => {
-                // setIsChangeEng(false)
-                setActiveEng({ icon: Icon })
-                // setActiveEngHref(href)
-              }}
+      <AnimatePresence>
+        {isShowEngList && (
+          <motion.div
+            className="top-50 absolute z-10 w-52"
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            variants={variantsEngList}
+            transition={{ duration: 0.3 }}
+          >
+            <ScrollArea className="absolute mt-1 h-auto rounded-md border-0 bg-background p-1">
+              {EngList.map(({ icon: Icon, title }, i) => (
+                <div
+                  key={i}
+                  className="flex w-full cursor-pointer rounded-md py-3 pl-4 transition-all duration-300 hover:bg-gray-800 hover:bg-opacity-50 hover:pl-8"
+                  onClick={() => {
+                    setActiveEng(EngList[i])
+                    setIsShowEngList(false)
+                  }}
+                >
+                  <Icon size={20} />
+                  <span className="pl-2 text-sm">{title}</span>
+                </div>
+              ))}
+            </ScrollArea>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      {keyword && (
+        <div className="top-50 absolute w-full">
+          <AnimatePresence>
+            <motion.div
+              key="scroll-area" // 确保每次更新时都有唯一的 key
+              initial={{ opacity: 0, scale: 0.95 }} // 初始状态
+              animate={{ opacity: 1, scale: 1 }} // 动画到的状态
+              exit={{ opacity: 0, scale: 0.95 }} // 退出时的状态
+              transition={{ duration: 0.3 }} // 动画持续时间
+              className="mt-1 h-auto w-full rounded-md border-0 bg-background p-1"
             >
-              <Icon size={20} />
-              <span className="pl-2 text-sm">{title}</span>
-            </div>
-          ))}
-        </ScrollArea>
-      </div>
-      <div className="top-50 absolute w-full">
-        <ScrollArea className="mt-1 h-auto w-full rounded-md border-0 bg-background p-1">
-          {suggestion?.map(({ q, sa }) => (
-            <p
-              key={sa}
-              className={cn(
-                "cursor-pointer rounded-md py-1 pl-4 transition-all duration-300",
-                "hover:bg-black/20 hover:bg-opacity-50 hover:pl-8"
-              )}
-              // onClick={() => goSearch(s)}
-            >
-              {q}
-            </p>
-          ))}
-        </ScrollArea>
-      </div>
+              <ScrollArea>
+                <p
+                  className={cn(
+                    "cursor-pointer rounded-md py-1 pl-4 transition-all duration-300",
+                    "hover:bg-black/20 hover:bg-opacity-50 hover:pl-8"
+                  )}
+                  onClick={() => handleSearch()}
+                >
+                  翻译一下
+                </p>
+                {suggestion?.map(({ q, sa }) => (
+                  <p
+                    key={sa}
+                    className={cn(
+                      "cursor-pointer rounded-md py-1 pl-4 transition-all duration-300",
+                      "hover:bg-black/20 hover:bg-opacity-50 hover:pl-8"
+                    )}
+                    onClick={() => handleSearch(q)}
+                  >
+                    {q}
+                  </p>
+                ))}
+              </ScrollArea>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      )}
     </motion.div>
   )
 }
