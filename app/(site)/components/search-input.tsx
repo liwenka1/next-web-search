@@ -6,6 +6,11 @@ import { format } from "date-fns"
 
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
+import { EngList } from "@/config/site"
+
+import type { IconType } from "react-icons"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 const SearchInput = () => {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -67,25 +72,28 @@ const SearchInput = () => {
     return () => clearInterval(interval)
   }, [])
 
+  const [activeEng, setActiveEng] = useState<{ icon: IconType }>({ icon: EngList[0].icon })
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="z-10 mt-20 w-full max-w-md"
+      className="relative z-10 mt-20 h-full w-full max-w-md"
     >
       <h1 className="mb-8 text-center text-4xl font-bold text-white"> {time && format(time, "HH:mm")}</h1>
       <div className="relative flex justify-center">
         <motion.div
           initial={{ width: "50%" }}
           animate={{ width: isFocused ? "100%" : "50%" }}
+          whileHover={{ width: "100%" }}
           transition={{ duration: 0.3 }}
           className="relative w-full"
         >
           <Input
             ref={inputRef}
             type="text"
-            placeholder={isFocused ? "输入搜索关键词..." : "搜索"}
+            placeholder={isFocused ? "" : "搜索"}
             value={keyword}
             onChange={handleChange}
             onFocus={() => setIsFocused(true)}
@@ -94,30 +102,63 @@ const SearchInput = () => {
                 setIsFocused(false)
               }
             }}
-            className={`w-full rounded-full px-4 py-3 transition-all duration-300 ${
+            className={cn(
+              "w-full rounded-full border-0 px-4 py-3 text-center transition-all duration-300",
+              "focus:align-middle focus:outline-0 focus:outline-white",
               isFocused
                 ? "bg-white text-gray-800 shadow-lg"
                 : "bg-white bg-opacity-20 text-white placeholder-white backdrop-blur-lg"
-            }`}
+            )}
           />
           <Button
-            className="absolute right-1 top-0 rounded-full bg-transparent p-2 hover:bg-white hover:bg-opacity-20"
+            className="absolute left-0 top-0 h-full rounded-full p-2"
+            variant="ghost"
             // onClick={handleSearch}
           >
-            <Search className={`h-full w-full ${isFocused ? "text-gray-800" : "text-white"}`} />
+            <activeEng.icon className={cn("h-full w-full", isFocused ? "text-gray-800" : "hidden")} />
+          </Button>
+          <Button
+            className="absolute right-0 top-0 h-full rounded-full p-2"
+            variant="ghost"
+            // onClick={handleSearch}
+          >
+            <Search className={cn("h-full w-full", isFocused ? "text-gray-800" : "hidden")} />
           </Button>
         </motion.div>
       </div>
-      <div>
-        {suggestion.map(({ q, sa }) => (
-          <p
-            key={sa}
-            className="cursor-pointer rounded-md py-1 pl-4 transition-all duration-300 hover:bg-black/20 hover:bg-opacity-50 hover:pl-8"
-            // onClick={() => goSearch(s)}
-          >
-            {q}
-          </p>
-        ))}
+      <div className="top-50 absolute z-10 w-52">
+        <ScrollArea className="absolute mt-1 h-auto rounded-md border-0 bg-background p-1">
+          {EngList.map(({ icon: Icon, title, href }, i) => (
+            <div
+              key={i}
+              className="flex w-full cursor-pointer rounded-md py-3 pl-4 transition-all duration-300 hover:bg-gray-800 hover:bg-opacity-50 hover:pl-8"
+              onClick={() => {
+                // setIsChangeEng(false)
+                setActiveEng({ icon: Icon })
+                // setActiveEngHref(href)
+              }}
+            >
+              <Icon size={20} />
+              <span className="pl-2 text-sm">{title}</span>
+            </div>
+          ))}
+        </ScrollArea>
+      </div>
+      <div className="top-50 absolute w-full">
+        <ScrollArea className="mt-1 h-auto w-full rounded-md border-0 bg-background p-1">
+          {suggestion?.map(({ q, sa }) => (
+            <p
+              key={sa}
+              className={cn(
+                "cursor-pointer rounded-md py-1 pl-4 transition-all duration-300",
+                "hover:bg-black/20 hover:bg-opacity-50 hover:pl-8"
+              )}
+              // onClick={() => goSearch(s)}
+            >
+              {q}
+            </p>
+          ))}
+        </ScrollArea>
       </div>
     </motion.div>
   )
