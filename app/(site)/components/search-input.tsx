@@ -1,11 +1,20 @@
 import { useEffect, useRef, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Search } from "lucide-react"
+import { ArrowRightLeft, Search } from "lucide-react"
 import fetchJsonp from "fetch-jsonp"
 import { format } from "date-fns"
 
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 import { EngList } from "@/config/site"
 import { useIndexStore } from "@/store"
@@ -86,6 +95,9 @@ const SearchInput = () => {
   const handleSearch = (s?: string) => {
     window.open(`${activeEng.href}${s || keyword}`)
   }
+  const handleTranslate = () => {
+    window.open(`https://fanyi.baidu.com/mtpe-individual/multimodal#/en/zh/${keyword}`)
+  }
 
   useEffect(() => {
     if (!isFocused) {
@@ -101,7 +113,36 @@ const SearchInput = () => {
       transition={{ duration: 0.5 }}
       className="relative z-10 mt-20 h-full w-full max-w-md"
     >
-      <h1 className="mb-8 text-center text-4xl font-bold text-white"> {time && format(time, "HH:mm")}</h1>
+      <Dialog>
+        <DialogTrigger asChild>
+          <div className="flex items-center justify-center p-4">
+            <motion.h1
+              className="cursor-pointer text-center text-4xl font-bold text-white"
+              whileHover={{ scale: 1.1 }} // 鼠标悬停时放大
+              transition={{ duration: 0.3 }} // 动画持续时间
+            >
+              {time && format(time, "HH:mm")}
+            </motion.h1>
+          </div>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Edit profile</DialogTitle>
+            <DialogDescription>Make changes to your profile here. Click save when done.</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Input id="name" value="Pedro Duarte" className="col-span-3" />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Input id="username" value="@peduarte" className="col-span-3" />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button type="submit">Save changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       <div className="relative flex justify-center">
         <motion.div
           initial={{ width: "50%" }}
@@ -186,11 +227,12 @@ const SearchInput = () => {
               <ScrollArea>
                 <p
                   className={cn(
-                    "cursor-pointer rounded-md py-1 pl-4 transition-all duration-300",
+                    "flex cursor-pointer rounded-md py-1 pl-4 transition-all duration-300",
                     "hover:bg-black/20 hover:bg-opacity-50 hover:pl-8"
                   )}
-                  onClick={() => handleSearch()}
+                  onClick={() => handleTranslate()}
                 >
+                  <ArrowRightLeft />
                   翻译一下
                 </p>
                 {suggestion?.map(({ q, sa }) => (
