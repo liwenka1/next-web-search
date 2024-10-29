@@ -1,28 +1,24 @@
 import { motion } from "framer-motion"
+import Link from "next/link"
 
 const Footer = () => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.2 }}
-      className="z-10 mt-auto pt-8"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="absolute bottom-0 mb-4 flex w-full justify-center text-[rgb(204,204,204)]"
     >
-      <nav className="flex justify-center space-x-6">
-        {[
-          { name: "Blog", href: "/blog" },
-          { name: "Nav", href: "/nav" },
-          { name: "Me", href: "/me" }
-        ].map((link) => (
-          <a
-            key={link.name}
-            href={link.href}
-            className="text-lg font-medium text-white transition-colors duration-200 hover:text-gray-200"
-          >
-            {link.name}
-          </a>
-        ))}
-      </nav>
+      <p>
+        <span>© 2024</span>
+        <Link href="https://github.com/liwenka1" target="_blank" className="pl-2 hover:underline">
+          文凯@liwenka1
+        </Link>
+        <span className="px-2">|</span>
+        <Link href="https://github.com/liwenka1/next-home-v2" target="_blank" className="hover:underline">
+          项目地址
+        </Link>
+      </p>
     </motion.div>
   )
 }

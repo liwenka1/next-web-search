@@ -21,8 +21,8 @@ const Weather = () => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: -50 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
       className="absolute right-4 top-4 z-10 rounded-lg bg-white bg-opacity-20 p-4 text-white backdrop-blur-lg"
     >
