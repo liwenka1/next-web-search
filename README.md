@@ -2,15 +2,15 @@
 
 ## 前言
 经常使用搜索引擎的时候会感到非常华丽，但实际我并用不到那么多功能，于是开发了这个非常简洁的起始页
-<a name="HY3He"></a>
+
 ## 需求分析
-<a name="YwTM5"></a>
+
 ### 布局
 
 - 头部天气栏
 - 中间搜索框
 - 底部为页脚
-<a name="i4Fib"></a>
+
 ### 技术选型
 
 - next.js + tailwindcss + shadcn/ui + framer-motion
@@ -24,12 +24,12 @@
 </P>
 
 <p align="center"> 基于 <b>Next.js</b> 的起始页网站 </p>
-<a name="bGKju"></a>
+
 
 ## 预览地址
 
-- [前端导航](https://s.liwenkai.fun)
-<a name="WY0P3"></a>
+- [起始页](https://s.liwenkai.fun)
+
 ## 功能介绍
 
 - 今日天气
@@ -38,7 +38,7 @@
 - 搜索框联想搜索
 - 支持搜索引擎切换
 - 支持 Vercel 直接部署上线
-<a name="Oscpw"></a>
+
 ## 说明
 
 - 此项目完全开源，仅供学习交流使用
