@@ -2,7 +2,7 @@
 
 import { Settings } from "lucide-react"
 import Link from "next/link"
-import React from "react"
+import React, { useEffect, useState } from "react"
 
 import { buttonVariants } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
@@ -14,9 +14,18 @@ import SettingModal from "./components/setting-modal"
 import { SocialConfig, WebsiteLinks } from "@/config/site"
 
 const Footer = () => {
+  const [isMobile, setisMobile] = useState(false)
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      if (window.innerWidth < 640) {
+        setisMobile(true)
+      }
+    }
+  }, [])
+
   return (
     <TooltipProvider>
-      <Dock direction="middle">
+      <Dock direction="middle" iconDistance={isMobile ? 0 : 140}>
         {WebsiteLinks.map(({ icon: Icon, title, href }) => (
           <DockIcon key={title}>
             <Tooltip>
@@ -26,7 +35,7 @@ const Footer = () => {
                   target="_blank"
                   className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "rounded-full")}
                 >
-                  <Icon />
+                  <Icon className="size-5" />
                 </Link>
               </TooltipTrigger>
               <TooltipContent>
@@ -45,7 +54,7 @@ const Footer = () => {
                   target="_blank"
                   className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "rounded-full")}
                 >
-                  <Icon />
+                  <Icon className="size-5" />
                 </Link>
               </TooltipTrigger>
               <TooltipContent>
@@ -59,7 +68,7 @@ const Footer = () => {
           <Tooltip>
             <TooltipTrigger asChild>
               <button className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "rounded-full")}>
-                <SettingModal TriggerChild={<Settings />} />
+                <SettingModal TriggerChild={<Settings className="size-5" />} />
               </button>
             </TooltipTrigger>
             <TooltipContent>

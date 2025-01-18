@@ -26,7 +26,7 @@ export const SocialConfig = [
   { title: "X", href: "https://x.com/liwenka1", icon: FaXTwitter }
 ]
 
-const ContactLinks = [
+export const ContactLinks = [
   {
     icon: AiFillGithub,
     href: "https://github.com/liwenka1"
@@ -45,7 +45,7 @@ const ContactLinks = [
   }
 ]
 
-const EngList = [
+export const EngList = [
   {
     title: "百度",
     icon: SiBaidu,
@@ -82,5 +82,3 @@ const EngList = [
     href: "https://s.weibo.com/weibo?q="
   }
 ]
-
-export { ContactLinks, EngList }

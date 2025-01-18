@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/prefer-for-of */
 "use client"
 
 import { AnimatePresence, motion } from "framer-motion"
@@ -70,9 +72,9 @@ export function PlaceholdersAndVanishInput({
     const newData: any[] = []
 
     for (let t = 0; t < 800; t++) {
-      let i = 4 * t * 800
+      const i = 4 * t * 800
       for (let n = 0; n < 800; n++) {
-        let e = i + 4 * n
+        const e = i + 4 * n
         if (pixelData[e] !== 0 && pixelData[e + 1] !== 0 && pixelData[e + 2] !== 0) {
           newData.push({
             x: n,
@@ -96,7 +98,7 @@ export function PlaceholdersAndVanishInput({
   }, [value, draw])
 
   const animate = (start: number) => {
-    const animateFrame = (pos: number = 0) => {
+    const animateFrame = (pos = 0) => {
       requestAnimationFrame(() => {
         const newArr = []
         for (let i = 0; i < newDataRef.current.length; i++) {
@@ -119,7 +121,7 @@ export function PlaceholdersAndVanishInput({
         if (ctx) {
           ctx.clearRect(pos, 0, 800, 800)
           newDataRef.current.forEach((t) => {
-            const { x: n, y: i, r: s, color: color } = t
+            const { x: n, y: i, r: s, color } = t
             if (n > pos) {
               ctx.beginPath()
               ctx.rect(n, i, s, s)

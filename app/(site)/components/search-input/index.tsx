@@ -8,7 +8,7 @@ import { ArrowRightLeft } from "lucide-react"
 import { PlaceholdersAndVanishInput } from "@/components/ui/placeholders-and-vanish-input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { cn } from "@/lib/utils"
-import { EngList } from "@/config/site"
+import { useIndexStore } from "@/store"
 
 const SearchInput = () => {
   const placeholders = [
@@ -18,7 +18,7 @@ const SearchInput = () => {
     "Write a Javascript method to reverse a string",
     "How to assemble your own PC?"
   ]
-  const [activeEng, setActiveEng] = useState<(typeof EngList)[number]>(EngList[0])
+  const { activeEng } = useIndexStore()
   const [keyword, setKeyword] = useState<string>("")
   const [suggestion, setSuggestion] = useState<{ type: string; sa: string; q: string }[]>([])
 
@@ -80,7 +80,7 @@ const SearchInput = () => {
 
   return (
     <div className="relative flex h-[40rem] flex-col items-center justify-center px-4">
-      <h2 className="mb-10 text-center text-xl sm:mb-20 sm:text-5xl">Ask Aceternity UI Anything</h2>
+      <h2 className="mb-10 text-center text-xl sm:mb-20 sm:text-5xl">Ask Anything</h2>
       <PlaceholdersAndVanishInput placeholders={placeholders} onChange={handleChange} onSubmit={onSubmit} />
       <AnimatePresence>
         {keyword && (

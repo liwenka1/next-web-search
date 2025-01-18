@@ -49,7 +49,7 @@ export function ThemeToggle() {
 
   return (
     <Button variant="ghost" size="icon" className="rounded-full" onClick={handleToggleTheme}>
-      {isDark ? <Sun /> : <Moon />}
+      {isDark ? <Sun className="size-5" /> : <Moon className="size-5" />}
     </Button>
   )
 }

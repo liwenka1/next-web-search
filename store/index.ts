@@ -1,11 +1,12 @@
 import { create } from "zustand"
+import { EngList } from "@/config/site"
 
 interface IndexStoreProps {
-  isFocused: boolean
-  setIsFocused: (isFocused: IndexStoreProps["isFocused"]) => void
+  activeEng: (typeof EngList)[number]
+  setActiveEng: (activeEng: IndexStoreProps["activeEng"]) => void
 }
 
 export const useIndexStore = create<IndexStoreProps>((set) => ({
-  isFocused: false,
-  setIsFocused: (isFocused) => set({ isFocused })
+  activeEng: EngList[0],
+  setActiveEng: (activeEng) => set({ activeEng })
 }))

@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import localFont from "next/font/local"
-import '@/public/font/font.css'
+import "@/public/font/font.css"
 
 import { ThemeProvider } from "@/components/theme-provider"
 import "@/styles/globals.css"
