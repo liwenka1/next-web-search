@@ -18,7 +18,7 @@ export const WebsiteLinks = [
   { title: "Me", href: "https://me.liwenkai.fun", icon: House },
   { title: "Blog", href: "https://blog.liwenkai.fun", icon: Rss },
   { title: "Nav", href: "https://nav.liwenkai.fun", icon: Navigation },
-  { title: "Search", href: "https://s.liwenkai.fun", icon: Search }
+  { title: "Search", href: "https://liwenkai.fun", icon: Search }
 ]
 
 export const SocialConfig = [
